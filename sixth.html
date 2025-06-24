@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>縛與解</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Microsoft JhengHei', sans-serif;
+      background-color: #0e0e0e;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .dialogue-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background-color: #0e0e0e;
+      overflow: hidden;
+    }
+
+    /* 三名角色立繪 */
+    .character-image {
+      position: absolute;
+      bottom: 0;
+      width: 23%;
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    #character1-img { left: 8%; }
+    #character2-img { left: 38%; }
+    #character3-img { left: 68%; }
+
+    /* 對話框 */
+    .dialogue-box {
+      position: relative;
+      width: 90%;
+      max-width: 1000px;
+      margin-bottom: 40px;
+      background-color: #0e0e0e;
+      border-radius: 20px;
+      padding: 20px 20px 20px 30px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+      z-index: 10;
+      font-size: 1.2em;
+      min-height: 100px;
+      line-height: 1.8;
+    }
+
+    .name-tag {
+      position: absolute;
+      top: -30px;
+      left: 20px;
+      background-color: #990000;
+      padding: 6px 18px;
+      border-radius: 12px 12px 0 0;
+      font-weight: bold;
+      color: #fff;
+      font-size: 1em;
+      z-index: 15;
+    }
+    .text{
+      color: #b6b6b6;
+      position: absolute;
+      bottom: 0px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgm" src="bgm5.mp3" loop autoplay></audio>
+
+  <div id="main-scene">
+    <div class="dialogue-container">
+      <!-- 三名角色立繪（永遠顯示） -->
+      <img id="character1-img" class="character-image" src="images/phoniex.png">
+      <img id="character2-img" class="character-image" src="images/luna.png">
+      <img id="character3-img" class="character-image" src="images/froice.png">
+
+      <!-- 對話框 -->
+      <div class="dialogue-box">
+        <div id="character-name" class="name-tag">（旁白）</div>
+        <div id="dialogue-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="text">● 點擊按下一步</p>
+
+  <script>
+    const dialogueFlow = [
+      { text: "牆上釘著一張泛黃的紅絨布佈告板，像是某種展示慾望與死亡的舞台。血紅色的字母如同用手指畫上的鮮血，斜斜地劃過上方：" },
+      { text: "《Please Kill Me》" },
+      { text: "不是哀求，也不是命令。那是某種臨界瘋狂下的呢喃，是人類在極限痛苦中最後一絲清醒留下的遺言。布告板上掛著八張照片，全是拍立得風格，紙邊已經翹起發皺。" },
+      { text: "每一張照片中的人，表情都不一樣，但都共同擁有一種令人不寒而慄的神情——痛苦、恐懼、或是早已超越恐懼的絕望。" },
+      { text: "第一張照片中的女人，雙眼怒睜，嘴被厚布緊緊綁住，像是正無聲尖叫。" },
+      { text: "第二張男子面容削瘦，皮膚乾裂如土，嘴角拉出不自然的弧線，仿佛死亡已在他身上停留太久。" },
+      { text: "第三張最為可怕，那是一張被毀容的臉，血肉模糊，連眼睛都幾乎看不清是否還睜著。" },
+      { text: "第四張則是某人將槍抵住自己的頭，拍攝者似乎特意捕捉下這臨界的一瞬。" },
+      { text: "其他幾張照片中，有人嘴巴被封死，有人低頭無語，有人盯著鏡頭不說話卻像在對你說：「你不會懂的，我只想死。」" },
+      { text: "最後一張照片異常醒目——那人的嘴上貼著一張白膠帶，畫著放射性危險符號。這不是普通的監禁，這是某種超出常理的實驗或控制。" },
+    ];
+  </script>
+
+  <script>
+    const bgm = document.getElementById('bgm');
+
+// 確保背景音樂在互動後播放（因瀏覽器限制自動播放）
+document.body.addEventListener('click', () => {
+  if (bgm.paused) {
+    bgm.play().catch(() => {}); // 捕捉錯誤避免控制台警告
+  }
+});
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const characterName = document.getElementById("character-name");
+      const dialogueText = document.getElementById("dialogue-text");
+
+      let currentIndex = 0;
+      let isTyping = false;
+      let typeInterval;
+      let fullText = "";
+
+      const typingAudio = new Audio("typing.mp3");
+      typingAudio.loop = true;
+
+      function showEntry(index) {
+        const entry = dialogueFlow[index];
+        if (!entry) return;
+
+        fullText = entry.text;
+        dialogueText.textContent = "";
+
+        let i = 0;
+        isTyping = true;
+
+        typingAudio.currentTime = 0;
+        typingAudio.play().catch(() => {});
+
+        clearInterval(typeInterval);
+        typeInterval = setInterval(() => {
+          if (i < fullText.length) {
+            dialogueText.textContent += fullText.charAt(i);
+            i++;
+          } else {
+            clearInterval(typeInterval);
+            typingAudio.pause();
+            typingAudio.currentTime = 0;
+            isTyping = false;
+          }
+        }, 30);
+      }
+
+      document.body.addEventListener("click", () => {
+        if (isTyping) {
+          clearInterval(typeInterval);
+          dialogueText.textContent = fullText;
+          typingAudio.pause();
+          typingAudio.currentTime = 0;
+          isTyping = false;
+          return;
+        }
+
+        currentIndex++;
+        if (currentIndex < dialogueFlow.length) {
+          showEntry(currentIndex);
+        } else {
+          window.location.href = "seventh.html";
+        }
+      });
+
+      showEntry(0);
+    });
+  </script>
+
+</body>
+</html>

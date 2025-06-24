@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <title>縛與解</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Microsoft JhengHei', sans-serif;
+      background-color: #0e0e0e;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .dialogue-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background-color: #0e0e0e;
+      overflow: hidden;
+    }
+
+    /* 三名角色立繪 */
+.character-image {
+      position: absolute;
+      bottom: 0;
+      width: 23%;
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    #character1-img { left: 8%; }
+    #character2-img { left: 38%; }
+    #character3-img { left: 68%; }
+
+    /* 對話框 */
+    .dialogue-box {
+      position: relative;
+      width: 90%;
+      max-width: 1000px;
+      margin-bottom: 40px;
+      background-color: #0e0e0e;
+      border-radius: 20px;
+      padding: 20px 20px 20px 30px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+      z-index: 10;
+      font-size: 1.2em;
+      min-height: 100px;
+      line-height: 1.8;
+    }
+
+    .name-tag {
+      position: absolute;
+      top: -30px;
+      left: 20px;
+      background-color: #990000;
+      padding: 6px 18px;
+      border-radius: 12px 12px 0 0;
+      font-weight: bold;
+      color: #fff;
+      font-size: 1em;
+      z-index: 15;
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgm" src="bgm8.mp3" loop autoplay></audio>
+
+
+  <div id="main-scene">
+    <div class="dialogue-container">
+      <!-- 三名角色立繪（永遠顯示） -->
+      <img id="character1-img" class="character-image" src="images/phoniex.png">
+      <img id="character2-img" class="character-image" src="images/luna.png">
+      <img id="character3-img" class="character-image" src="images/froice.png">
+
+      <!-- 對話框 -->
+      <div class="dialogue-box">
+        <div id="character-name" class="name-tag">（旁白）</div>
+        <div id="dialogue-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dialogueFlow = [
+      { text: "咔噠。" },
+      { text: "門鎖竟然轉動了。" },
+      { text: "三人交換了一個眼神，然後小心地推門而入。" },
+      { text: "室內一片昏暗，只有老舊的投影機發出細微的運轉聲。那是一台復古型號，金屬表面覆著歲月的痕跡，卻仍自動地將膠片推入片槽。" },
+      { text: "銀幕閃爍著光影，畫面剛開始像是模糊的電影預告片，但不久後，影像變得清晰而真實——像是某種監視畫面。" },
+      { text: "畫面緩緩浮現......" }
+    ];
+  </script>
+
+ <script>
+    const bgm = document.getElementById('bgm');
+
+// 確保背景音樂在互動後播放（因瀏覽器限制自動播放）
+document.body.addEventListener('click', () => {
+  if (bgm.paused) {
+    bgm.play().catch(() => {}); // 捕捉錯誤避免控制台警告
+  }
+});
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const characterName = document.getElementById("character-name");
+      const dialogueText = document.getElementById("dialogue-text");
+
+      let currentIndex = 0;
+      let isTyping = false;
+      let typeInterval;
+      let fullText = "";
+
+      const typingAudio = new Audio("typing.mp3");
+      typingAudio.loop = true;
+
+      function showEntry(index) {
+        const entry = dialogueFlow[index];
+        if (!entry) return;
+
+        fullText = entry.text;
+        dialogueText.textContent = "";
+
+        let i = 0;
+        isTyping = true;
+
+        typingAudio.currentTime = 0;
+        typingAudio.play().catch(() => {});
+
+        clearInterval(typeInterval);
+        typeInterval = setInterval(() => {
+          if (i < fullText.length) {
+            dialogueText.textContent += fullText.charAt(i);
+            i++;
+          } else {
+            clearInterval(typeInterval);
+            typingAudio.pause();
+            typingAudio.currentTime = 0;
+            isTyping = false;
+          }
+        }, 30);
+      }
+
+      document.body.addEventListener("click", () => {
+        if (isTyping) {
+          clearInterval(typeInterval);
+          dialogueText.textContent = fullText;
+          typingAudio.pause();
+          typingAudio.currentTime = 0;
+          isTyping = false;
+          return;
+        }
+
+        currentIndex++;
+        if (currentIndex < dialogueFlow.length) {
+          showEntry(currentIndex);
+        } else {
+          dialogueText.textContent = "(未完待續......)";
+        }
+      });
+
+      showEntry(0);
+    });
+  </script>
+
+</body>
+</html>

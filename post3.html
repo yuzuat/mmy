@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>縛與解</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #0e0e0e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    .display {
+      font-size: 28px;
+      letter-spacing: 5px;
+      background: #222;
+      padding: 10px 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 70px);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .keypad button {
+      padding: 15px;
+      font-size: 24px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .keypad button:hover {
+      background-color: #666;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+
+    .actions button {
+      padding: 10px 15px;
+      font-size: 18px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .submit {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .clear {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .message {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .text{
+      color: #b6b6b6;
+      position: absolute;
+      bottom: 0px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>密碼解鎖</h1>
+  <p>提示：輸入由 <strong>P(16)、K(11)、M(13)</strong> 英文字母順序組成的數字密碼</p>
+  
+  <div class="display" id="display">———</div>
+
+  <div class="keypad">
+    <!-- 數字按鈕 1~9 -->
+    <button onclick="addDigit('1')">1</button>
+    <button onclick="addDigit('2')">2</button>
+    <button onclick="addDigit('3')">3</button>
+    <button onclick="addDigit('4')">4</button>
+    <button onclick="addDigit('5')">5</button>
+    <button onclick="addDigit('6')">6</button>
+    <button onclick="addDigit('7')">7</button>
+    <button onclick="addDigit('8')">8</button>
+    <button onclick="addDigit('9')">9</button>
+    <button onclick="addDigit('0')">0</button>
+  </div>
+
+  <div class="actions">
+    <button class="clear" onclick="clearInput()">清除</button>
+    <button class="submit" onclick="checkPassword()">送出</button>
+  </div>
+
+  <div class="message" id="message"></div>
+
+  <a href="nineth.html"><p class="text">跳過</p></a>
+
+  <script>
+  let input = '';
+  const correctPassword = "161113";
+
+  // 加入音效
+  const successSound = new Audio('success.mp3'); // 解鎖成功音效
+  const failSound = new Audio('failed.mp3');       // 解鎖失敗音效
+
+  function addDigit(num) {
+    if (input.length < 6) {
+      input += num;
+      updateDisplay();
+    }
+  }
+
+  function updateDisplay() {
+    const display = document.getElementById('display');
+    display.textContent = input.padEnd(6, '—');
+  }
+
+  function clearInput() {
+    input = '';
+    updateDisplay();
+    document.getElementById('message').textContent = '';
+  }
+
+  function checkPassword() {
+    const message = document.getElementById('message');
+    if (input === correctPassword) {
+      message.textContent = "✅ 解鎖成功！";
+      message.style.color = "lightgreen";
+      successSound.play(); // 播放成功音效
+      setTimeout(() => {
+        window.location.href = "nineth.html";
+      }, 1000);
+    } else {
+      message.textContent = "❌ 密碼錯誤，請再試一次。";
+      message.style.color = "tomato";
+      failSound.play(); // 播放失敗音效
+    }
+  }
+
+  // 初始化顯示
+  updateDisplay();
+</script>
+
+
+</body>
+</html>

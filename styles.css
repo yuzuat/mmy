@@ -1,0 +1,190 @@
+/* 全域基本樣式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Microsoft JhengHei', sans-serif;
+  background-color: #0e0e0e;
+  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 首頁畫面 */
+#enter-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, #0e0e0e 0%, #0e0e0e 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+#enter-screen h1 {
+  font-size: 3em;
+  margin-bottom: 30px;
+  color: #e0e0e0;
+}
+
+#enter-btn {
+  padding: 15px 40px;
+  font-size: 1.2em;
+  background-color: #550000;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#enter-btn:hover {
+  background-color: #770000;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+}
+
+/* 劇情場景區塊 */
+.dialogue-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-color: #0e0e0e;
+  overflow: hidden;
+}
+
+/* 角色立繪 */
+.character-image {
+  position: absolute;
+  left: 65%;
+  bottom: 0;
+  width: 23%;
+  opacity: 0.9;
+  z-index: 0;
+}
+
+/* 對話框 */
+.dialogue-box {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  margin-bottom: 40px;
+  background-color: rgba(0, 0, 0, 0.85);
+  border-radius: 20px;
+  padding: 20px 20px 20px 140px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+  z-index: 10;
+  font-size: 1.2em;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+/* 名字標籤 */
+.name-tag {
+  position: absolute;
+  top: -30px;
+  left: 20px;
+  background-color: #990000;
+  padding: 6px 18px;
+  border-radius: 12px 12px 0 0;
+  font-weight: bold;
+  color: #fff;
+  font-size: 1em;
+  z-index: 15;
+}
+
+.hidden {
+  display: none !important;
+}
+.narration-container {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  right: 10%;
+  color: #fff;
+  font-size: 20px;
+  line-height: 1.8;
+  max-height: 80vh;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px 30px;
+  border-radius: 12px;
+  z-index: 20;
+  cursor: pointer;
+  transition: opacity 0.5s;
+}
+
+.narration-text {
+  white-space: pre-line;
+}
+.narrative {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s ease-out forwards;
+}
+.narrative:nth-of-type(2) { animation-delay: 0.5s; }
+.narrative:nth-of-type(3) { animation-delay: 1.5s; }
+.narrative:nth-of-type(4) { animation-delay: 2.5s; }
+.narrative:nth-of-type(5) { animation-delay: 3.5s; }
+.narrative:nth-of-type(6) { animation-delay: 4.5s; }
+
+#start-dialogue-btn {
+  margin-top: 40px;
+  padding: 15px 30px;
+  background-color: #770000;
+  color: white;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
+  animation: fadeIn 1s ease-out forwards;
+  animation-delay: 6.5s;
+  opacity: 0;
+}
+
+
+.narration-text:nth-child(1) { animation-delay: 0.5s; }
+.narration-text:nth-child(2) { animation-delay: 2s; }
+.narration-text:nth-child(3) { animation-delay: 3.5s; }
+.narration-text:nth-child(4) { animation-delay: 5s; }
+.narration-text:nth-child(5) { animation-delay: 6.5s; }
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.text{
+  color: #b6b6b6;
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+}
+@keyframes talkMove {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.talking {
+  animation: talkMove 0.4s ease-in-out infinite;
+}

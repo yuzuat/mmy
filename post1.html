@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>縛與解</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <style>
+    html, body {
+      margin: 0;
+      background: black;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #container {
+      position: relative;
+      width: 600px;
+      height: auto;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    #poster {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      display: block;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      transition: opacity 2s ease-out;
+    }
+
+    h3 {
+      color: #d8d8d8;
+      position: absolute;
+      top: 0px;
+      left: 10px;
+    }
+    .text{
+      color: #b6b6b6;
+      position: absolute;
+      bottom: 0px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h3>💡移動滑鼠照亮海報</h3>
+
+  <div id="container">
+    <img id="poster" src="images/post1.png" alt="海報">
+    <canvas id="mask"></canvas>
+  </div>
+
+  <a href="fourth.html"><p class="text">跳過</p></a>
+
+  <script>
+    const poster = document.getElementById('poster');
+    const canvas = document.getElementById('mask');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let revealedPixels = 0;
+    let totalPixels;
+    let revealedMap;
+
+    function initMask() {
+      width = poster.clientWidth;
+      height = poster.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.fillStyle = 'rgba(0,0,0,0.85)';
+      ctx.fillRect(0, 0, width, height);
+
+      totalPixels = width * height;
+      revealedPixels = 0;
+      revealedMap = new Set();
+      canvas.style.opacity = 1;
+    }
+
+    function reveal(x, y) {
+      const radius = 100;
+      const key = `${Math.floor(x / 10)}_${Math.floor(y / 10)}`;
+      if (revealedMap.has(key)) return;
+      revealedMap.add(key);
+
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, 'rgba(0,0,0,0)');
+      gradient.addColorStop(1, 'rgba(0,0,0,0.95)');
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+
+      revealedPixels += Math.PI * radius * radius * 0.15;
+      const percent = revealedPixels / totalPixels;
+
+      if (percent >= 0.7) {
+        canvas.removeEventListener('mousemove', mouseMoveHandler);
+        setTimeout(() => {
+            canvas.style.opacity = 0; // 使用 CSS 過渡淡出
+            setTimeout(() => {
+            window.location.href = "fourth.html"; // ← 自動跳轉
+            }, 2000); // 等淡出動畫結束再跳轉（和 CSS 過渡時間對應）
+        }, 300);
+        }
+    }
+
+    function mouseMoveHandler(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      reveal(x, y);
+    }
+
+    window.addEventListener('resize', initMask);
+    poster.addEventListener('load', () => {
+      initMask();
+      canvas.addEventListener('mousemove', mouseMoveHandler);
+    });
+  </script>
+</body>
+</html>

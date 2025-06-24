@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <title>縛與解</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+ <audio id="bgm" src="bgm2.mp3" autoplay loop muted></audio>
+
+
+  <div id="main-scene" class="hidden">
+    <div class="dialogue-container">
+      <!-- 角色立繪 -->
+      <img id="character-img" class="character-image" src="" alt="角色立繪">
+
+      <!-- 對話框 -->
+      <div class="dialogue-box">
+        <div id="character-name" class="name-tag"></div>
+        <div id="dialogue-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="text">● 點擊按下一步</p>
+
+  <script src="js/dialogues.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    const bgm = document.getElementById('bgm');
+
+document.body.addEventListener('click', () => {
+  const bgm = document.getElementById('bgm');
+  if (bgm.muted) {
+    bgm.muted = false;
+  }
+  if (bgm.paused) {
+    bgm.play().catch(() => {});
+  }
+});
+window.addEventListener('load', () => {
+    const bgm = document.getElementById('bgm');
+    bgm.play().catch(() => {});
+
+    // 延遲解除靜音 (但多數瀏覽器會忽略)
+    setTimeout(() => {
+      bgm.muted = false;
+    }, 1000);
+  });
+
+</script>
+
+</body>
+</html>

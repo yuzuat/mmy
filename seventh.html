@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>縛與解</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC&display=swap');
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Serif TC', serif;
+      background-color: #0e0e0e;
+      color: #f0e6d2;
+      overflow: hidden;
+      height: 100vh;
+      cursor: pointer;
+    }
+
+    section {
+      position: relative;
+      width: 100%;
+      padding: 10vh 10vw;
+      display: flex;
+      flex-direction: column;
+      background: url('your-dark-hall-image.jpg') no-repeat center center / cover;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, #0e0e0e, #0e0e0e);
+      z-index: 0;
+    }
+
+    .content, .second-content, .third-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      background: transparent;
+      color: #f0e6d2;
+      display: none;
+    }
+
+    .visible {
+      display: block;
+      animation: slideInUp 1s ease-out forwards;
+    }
+
+    p {
+      margin-bottom: 1.5em;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .slide-out-up {
+      animation: slideOutUp 1.2s ease-in forwards;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideOutUp {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-60px);
+      }
+    }
+
+    #choiceContainer {
+      margin-top: 20px;
+      z-index: 2;
+      max-width: 800px;
+      display: none;
+      gap: 1em;
+    }
+
+    .floating-wrapper {
+      display: inline-block;
+      animation: floatA 3s ease-in-out infinite;
+    }
+
+    .floating-wrapper:nth-child(2) {
+      animation: floatB 4s ease-in-out infinite;
+    }
+
+    @keyframes floatA {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes floatB {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    #choiceContainer button {
+      background: #f0e6d2;
+      border: none;
+      padding: 10px 20px;
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1rem;
+      cursor: pointer;
+      color: black;
+      border-radius: 5px;
+      transition: transform 0.3s ease, background 0.3s;
+    }
+
+    #choiceContainer button:hover {
+      transform: scale(1.1);
+      background: #d4c69a;
+    }
+    .text{
+      color: #b6b6b6;
+      position: absolute;
+      bottom: 0px;
+      right: 20px;
+    }
+    #dustCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgm" src="bgm4.mp3" loop autoplay></audio>
+
+  <section>
+    <canvas id="dustCanvas"></canvas>
+
+    <div class="overlay"></div>
+
+    <div class="content" id="firstContent">
+      <p data-text="三人腳步放輕，謹慎地踏上通往二樓的旋轉樓梯。"></p>
+      <p data-text="鐵製扶手泛著淡淡的冷意，樓梯上的紅絨地毯覆著一層灰塵，"></p>
+      <p data-text="每一步都揚起細微的塵霧，與鞋底摩擦發出的聲音，在靜謐空間中格外刺耳。"></p>
+    </div>
+
+    <div class="second-content" id="secondContent">
+      <p data-text="來到二樓樓梯口，旭真謹慎地探頭往走廊望去，確認四下無人後，才示意兩人跟上。"></p>
+      <p data-text="走廊狹長昏暗，牆上掛著幾幅早已褪色的電影海報，燈光斑駁地灑落，彷彿時間在這裡停滯。"></p>
+      <p data-text="厚實的地毯吸走了他們的腳步聲，三人默默走過幾扇緊閉的門，直到來到一間標示為「放映室」的門前。"></p>
+    </div>
+
+    <div id="choiceContainer">
+      <div class="floating-wrapper"><a href="eighth.html"><button>🚪嘗試開門</button></a></div>
+    </div>
+
+    <div class="third-content" id="thirdContent">
+      <p data-text="咲月柚站在那張海報前，目光凝視著那褪色的畫面。雖然紙張已泛黃，邊角破損，主角的臉甚至被撕掉了一半，但構圖仍清晰可辨："></p>
+    </div>
+  </section>
+
+  <p class="text">● 點擊按下一步</p>
+
+  <script>
+    const bgm = document.getElementById('bgm');
+
+// 確保背景音樂在互動後播放（因瀏覽器限制自動播放）
+document.body.addEventListener('click', () => {
+  if (bgm.paused) {
+    bgm.play().catch(() => {}); // 捕捉錯誤避免控制台警告
+  }
+});
+
+    const firstContent = document.getElementById('firstContent');
+  const secondContent = document.getElementById('secondContent');
+  const thirdContent = document.getElementById('thirdContent');
+  const choiceContainer = document.getElementById('choiceContainer');
+  const goBackBtn = document.getElementById('goBackBtn');
+
+  const firstParas = firstContent.querySelectorAll('p');
+  const secondParas = secondContent.querySelectorAll('p');
+  const thirdParas = thirdContent.querySelectorAll('p');
+
+  let started = false;
+  let typing = false;
+  let skipTyping = false;
+  let showingSecond = false;
+
+  const typingAudio = new Audio('typing.mp3');
+  typingAudio.loop = true;
+
+  const canvas = document.getElementById('dustCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  class Particle {
+    constructor() {
+      this.reset();
+    }
+
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * 1.2 + 0.2;
+      this.speed = Math.random() * 0.3 + 0.1;
+      this.alpha = Math.random() * 0.3 + 0.05;
+    }
+
+    update() {
+      this.y -= this.speed;
+      if (this.y < 0) {
+        this.y = canvas.height;
+        this.x = Math.random() * canvas.width;
+      }
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 200; i++) {
+    particles.push(new Particle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  async function typeText(el, text, speed = 40) {
+    el.textContent = '';
+    if (typingAudio.paused) typingAudio.play().catch(() => {});
+    for (let i = 0; i < text.length; i++) {
+      if (skipTyping) {
+        el.textContent = text;
+        break;
+      }
+      el.textContent += text[i];
+      let delay = speed;
+      if (/[，、]/.test(text[i])) delay = 200;
+      if (/[。！？…]/.test(text[i])) delay = 400;
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  async function typeParagraphs(paragraphs) {
+    typing = true;
+    skipTyping = false;
+    for (const p of paragraphs) {
+      const text = p.dataset.text;
+      await typeText(p, text);
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    typingAudio.pause();
+    typingAudio.currentTime = 0;
+    typing = false;
+    skipTyping = false;
+  }
+
+  document.body.addEventListener('click', async () => {
+    if (typing) {
+      skipTyping = true;
+      return;
+    }
+
+    if (!started) {
+      started = true;
+      firstContent.classList.add('visible');
+      await typeParagraphs(firstParas);
+    } else if (!showingSecond) {
+      showingSecond = true;
+      firstContent.classList.add('slide-out-up');
+      firstContent.addEventListener('animationend', async () => {
+        firstContent.style.display = 'none';
+        secondContent.classList.add('visible');
+        await typeParagraphs(secondParas);
+        choiceContainer.style.display = 'flex';
+      }, { once: true });
+    }
+  });
+
+  goBackBtn?.addEventListener('click', async () => {
+    if (!typing) {
+      choiceContainer.style.display = 'none';
+      secondContent.classList.remove('visible');
+      secondContent.classList.add('slide-out-up');
+      secondContent.addEventListener('animationend', async () => {
+        secondContent.style.display = 'none';
+        thirdContent.classList.add('visible');
+        await typeParagraphs(thirdParas);
+      }, { once: true });
+    }
+  });
+  </script>
+</body>
+</html>

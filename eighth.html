@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <title>縛與解</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <audio id="bgm" src="0621.MP3" loop autoplay></audio>
+
+  <div id="main-scene" class="hidden">
+    <div class="dialogue-container">
+      <!-- 角色立繪 -->
+      <img id="character-img" class="character-image" src="" alt="角色立繪">
+
+      <!-- 對話框 -->
+      <div class="dialogue-box">
+        <div id="character-name" class="name-tag"></div>
+        <div id="dialogue-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/dialogues3.js"></script>
+  <script src="js/script3.js"></script>
+  <script>
+    const bgm = document.getElementById('bgm');
+
+// 確保背景音樂在互動後播放（因瀏覽器限制自動播放）
+document.body.addEventListener('click', () => {
+  if (bgm.paused) {
+    bgm.play().catch(() => {}); // 捕捉錯誤避免控制台警告
+  }
+});
+</script>
+
+</body>
+</html>
